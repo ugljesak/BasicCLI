@@ -1,13 +1,24 @@
 #include "Time.h"
-#include "../utils/Logger.h"
-#include <time.h>
+#include <ctime>
 
-void Time::execute(const CommandData& data) {
-    if (!data.args.empty()) Logger::warning("Prosledjeni neocekivani argumenti.");
+
+Time::Time(const std::vector<std::string> &args) {
+    m_MinPositionals = 0;
+    m_MaxPositionals = 0;
+
+    parseArguments(args);
+}
+
+void Time::execute(std::istream &in, std::ostream &out) {
+
     const time_t now = time(0);
     const struct tm ts = *localtime(&now);
     char localTime[20];
     strftime(localTime, sizeof(localTime), "%X", &ts);
 
-    data.output << localTime << std::endl;
+    out << localTime << '\n';
+}
+
+std::string Time::manual() {
+    return "time";
 }

@@ -11,7 +11,7 @@ std::vector<std::string> Parser::tokenize() const {
     std::string currToken;
     bool inQ = false;
 
-    std::string markers(m_Line.length(), ' ');
+    std::string markers(m_Line.length() + 3, '~');
     bool hasError = false;
 
     for (size_t i = 0; i < m_Line.size(); ++i) {

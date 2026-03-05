@@ -1,7 +1,6 @@
 #include "Logger.h"
 
-
-Logger::Logger() : m_OutputStream(std::cout) {}
+const std::string LOG_FILE = "DebugCLI.log";
 
 void Logger::info(const std::string& message) {
     getInstance().logMessage("INFO", message);
@@ -14,5 +13,7 @@ void Logger::error(const std::string& message) {
 }
 
 void Logger::logMessage(const std::string& type, const std::string& message) const {
-    m_OutputStream << "[" << type << "] " << message << std::endl;
+    std::ofstream file(LOG_FILE, std::ios::app);
+    if (file.is_open()) file << "[" << type << "] " << message << std::endl;
+    file.close();
 }

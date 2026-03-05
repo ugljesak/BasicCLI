@@ -3,33 +3,39 @@
 #include "../utils/Parser.h"
 #include <fstream>
 
-void WordCount::execute(const CommandData& data) {
-    if (data.args.empty()) {
-        throw std::runtime_error("Missing command argument.");
-    }
+WordCount::WordCount(const std::vector<std::string> &args) {
+    m_MinPositionals = 0;
+    m_MaxPositionals = 1;
 
-    const std::string& option = data.args[0].first;
+    parseArguments(args);
+    if (!m_Args.hasOption()) throw ArgumentError(this->getName(), "Missing option, available -c and -w.");
+    if (m_Args.option.size() > 2) throw ArgumentError(this->getName(), "Unknown option '" + m_Args.option + "' passed.");
+}
 
-    std::string str;
-    if (data.args[0].second.empty()) {
-        str = Parser::getInput(data.input);
-    }
-    else if (Parser::inQuotes(data.args[0].second)) {
-        str = data.args[0].second;
-        Parser::stripQuotes(str);
-    }
-    else {
-        std::string filename = data.args[0].second;
-        std::ifstream input(filename);
-        if (!input.is_open()) throw std::runtime_error("Error opening file `" + filename + "`.");
-        str = Parser::getInput(input);
-        input.close();
-    }
-    int result;
-    if (option == "-w") result = countWords(str);
-    else if (option == "-c") result = countChars(str);
-    else throw std::runtime_error("Unknown option, supported -w and -c.");
-    data.output << result << std::endl;
+void WordCount::execute(std::istream& in, std::ostream& out) {
+
+    const char option = m_Args.hasOption() ? m_Args.option[1] : '\0';
+    const std::string arg = m_Args.positionals.empty() ? "" : m_Args.positionals[0];
+
+    processWithStream(arg, in, [&](std::istream& finalStream) -> void {
+        const std::string str = Reader::getInput(finalStream);
+        int result;
+        switch (option) {
+            case 'w':
+                result = countWords(str);
+                break;
+            case 'c':
+                result = countChars(str);
+                break;
+            default:
+                throw ArgumentError(this->getName(), "Unknown option '" + m_Args.option + "' passed.");
+        }
+        out << result << '\n';
+    });
+}
+
+std::string WordCount::manual() {
+    return "wc -opt [argument]";
 }
 
 int WordCount::countChars(const std::string& str) {

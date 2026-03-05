@@ -1,30 +1,22 @@
 #include "Registry.h"
+
+#include <utility>
 #include "../utils/Logger.h"
+#include "../interfaces/Command.h"
 
-
-Registry::Registry() {}
 
 Registry::~Registry() {
-    for(auto it=m_Commands.begin(); it!=m_Commands.end(); ++it){
-        delete it->second;
-    }
     m_Commands.clear();
 }
 
-void Registry::registerCommand(const std::string& name, ICommand* command) {
-    
-    if(m_Commands.find(name) != m_Commands.end()){
-        delete m_Commands[name];
-        Logger::warning("Command with alias `" + name + "` already registered.");
-    }
-    m_Commands[name] = command;
+void Registry::registerCommand(const std::string& name, CreateFunc func) {
+    m_Commands[name] = std::move(func);
 }
 
-ICommand* Registry::getCommand(const std::string& name) {
+std::unique_ptr<ICommand> Registry::createCommand(const std::string& name, const std::vector<std::string>& args) {
         
-    if(m_Commands.find(name) == m_Commands.end()) {
-        Logger::error("Command `" + name + "` not found in registry.");
-        return nullptr;
+    if (m_Commands.contains(name)) {
+        return m_Commands[name](args);
     }
-    return m_Commands[name];
+    return nullptr;
 }

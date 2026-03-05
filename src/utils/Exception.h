@@ -13,7 +13,7 @@ public:
 class LexicalError : public ShellException {
 public:
     LexicalError(const std::string& originalLine, const std::string& markerLine)
-        : ShellException("Error - unexpected characters:\n" + originalLine + "\n" + markerLine) {}
+        : ShellException("Lexical Error: Unexpected characters:\n" + originalLine + "\n" + markerLine) {}
 };
 
 // Semantic errors for pipelines and redirections.
@@ -34,6 +34,11 @@ public:
     ExecutionError(const std::string& msg) : ShellException("Execution Error: " + msg) {}
 };
 
+class FileIOError : public ExecutionError {
+public:
+    FileIOError(const std::string& filename) : ExecutionError("Cannot open file '" + filename + "'.") {}
+};
+
 // Bad type of argument, bad number of arguments etc.
 class ArgumentError : public ShellException {
 public:
@@ -45,7 +50,7 @@ public:
 class CommandNotFoundError : public ShellException {
 public:
     CommandNotFoundError(const std::string& cmdName) 
-        : ShellException("Command not found: " + cmdName) {}
+        : ShellException("Unknown command: " + cmdName) {}
 };
 
 #endif  // EXCEPTION_H

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <iostream>
+#include <fstream>
 
 class Logger {
 public:
@@ -14,7 +15,7 @@ public:
     Logger(Logger&&) = delete;
 private:
     // Copying and creating logger class is forbidden.
-    Logger();
+    Logger() = default;
 
     void logMessage(const std::string& type, const std::string& message) const;
 
@@ -22,8 +23,6 @@ private:
         static Logger instance;
         return instance;
     }
-
-    std::ostream& m_OutputStream;
 };
 
 #endif

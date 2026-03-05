@@ -1,20 +1,28 @@
 #include "Remove.h"
 #include "../utils/Logger.h"
+#include "../utils/Exception.h"
+
 #include <fstream>
 #include <cstdio>
 #include <filesystem>
 
-void Remove::execute(const CommandData& data) {
-    if (data.args.size() != 1 || (data.args.size() == 1 && !data.args[0].first.empty())) {
-        Logger::error("Missing file operand.");
-        return;
-    }
+Remove::Remove(const std::vector<std::string> &args) {
+    m_MinPositionals = 1;
+    m_MaxPositionals = 1;
 
-    const std::string& filename = data.args[0].second;
+    parseArguments(args);
+}
+
+void Remove::execute(std::istream &in, std::ostream &out) {
+
+    const std::string& filename = m_Args.positionals[0];
     std::ifstream file(filename);
-    if (!file.good()) {
-        throw std::runtime_error("File not found.");
-    }
+    if (!file.good()) throw ExecutionError("File '" + filename + "' does not exist.");
+
     std::remove(filename.c_str());
-    Logger::info("File `" + filename + "` successfully deleted.");
+    Logger::info("File `" + filename + "` successfully removed.");
+}
+
+std::string Remove::manual() {
+    return "rm filename";
 }

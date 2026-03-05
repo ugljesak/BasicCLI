@@ -1,22 +1,28 @@
 #include "Touch.h"
+#include "../utils/Logger.h"
+#include "../utils/Exception.h"
 
 #include <filesystem>
-
-#include "../utils/Logger.h"
 #include <fstream>
 
+Touch::Touch(const std::vector<std::string> &args) {
+    m_MinPositionals = 1;
+    m_MaxPositionals = 1;
 
-void Touch::execute(const CommandData &data) {
-    if (data.args.size() != 1 || (data.args.size() == 1 && !data.args[0].first.empty())) {
-        throw std::runtime_error("Missing file operand.");
-        return;
-    }
-    const std::string& filename = data.args[0].second;
-    if (std::filesystem::exists(filename)) {
-        throw std::runtime_error("File `" + filename + "` already exists.");
-    }
+    parseArguments(args);
+}
+
+void Touch::execute(std::istream &in, std::ostream &out) {
+
+    const std::string& filename = m_Args.positionals[0];
+    if (std::filesystem::exists(filename)) throw ExecutionError("File `" + filename + "` already exists.");
+
     std::ofstream file(filename, std::ios::app);
+    if (!file.is_open()) throw FileIOError(filename);
     file.close();
+    Logger::info("File successfully created.");
+}
 
-
+std::string Touch::manual() {
+    return "touch filename";
 }

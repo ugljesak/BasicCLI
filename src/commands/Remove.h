@@ -1,11 +1,15 @@
 #ifndef REMOVE_H
 #define REMOVE_H
 
-#include "../interfaces/Command.h"
+#include "../interfaces/BaseCommand.h"
 
-class Remove : public ICommand {
+
+class Remove : public BaseCommand {
 public:
-    void execute(const CommandData &data) override;
+    explicit Remove(const std::vector<std::string>& args);
+
+    void execute(std::istream& in, std::ostream& out) final;
+    std::string manual() final;
 };
 
 #endif  // REMOVE_H

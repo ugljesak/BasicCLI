@@ -1,4 +1,5 @@
 #include "Reader.h"
+#include "Exception.h"
 
 namespace Reader {
     std::string getInput(std::istream& input, const char terminator) {
@@ -17,13 +18,19 @@ namespace Reader {
         return str;
     }
 
+    std::string getLine(std::istream& input) {
+        std::string line;
+        if (!std::getline(input, line)) return "";
+        return line;
+    }
+
     bool isOption(const std::string& token) {
         return (token.size() >= 2 && token[0] == '-');
     }
 
-    void stripQuotes(std::string& str) {
-        if (str.back() == '"') str.pop_back();
-        if (str.front() == '"') str.erase(0, 1);
+    std::string stripQuotes(const std::string& str) {
+        if (!inQuotes(str)) throw ArgumentError("tr", "Parameter not in quotes.");
+        return str.substr(1, str.size() - 2);
     }
 
     bool inQuotes(const std::string& str) {

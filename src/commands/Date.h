@@ -1,11 +1,14 @@
 #ifndef DATE_H
 #define DATE_H
 
-#include "../interfaces/Command.h"
+#include "../interfaces/BaseCommand.h"
 
-class Date : public ICommand {
+class Date : public BaseCommand {
 public:
-    void execute(const CommandData& data) override;
+    explicit Date(const std::vector<std::string>& args);
+
+    void execute(std::istream& in, std::ostream& out) final;
+    std::string manual() final;
 };
 
 
