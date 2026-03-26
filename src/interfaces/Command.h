@@ -9,8 +9,8 @@
 struct CommandData {
     std::string name;
     std::vector<std::string> args;
-    std::string inputFile = "";
-    std::string outputFile = "";
+    std::string inputFile;
+    std::string outputFile;
     bool append = false;
 };
 
@@ -18,7 +18,7 @@ struct Pipeline {
     std::vector<CommandData> commands;
 
     void append(const CommandData& data) { commands.push_back(data); }
-    bool isEmpty() const { return commands.empty(); }
+    [[nodiscard]] bool isEmpty() const { return commands.empty(); }
 };
 
 class ICommand {

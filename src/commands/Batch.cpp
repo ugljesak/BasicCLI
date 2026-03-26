@@ -17,7 +17,7 @@ void Batch::execute(std::istream &in, std::ostream &out) {
     std::ifstream inFile(filename);
     if (!inFile.is_open()) throw FileIOError(filename);
 
-    CLI tempCLI(m_Registry, inFile, std::cin, out);
+    CLI tempCLI(m_Registry, inFile, in, out);
     tempCLI.run();
 }
 

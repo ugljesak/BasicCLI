@@ -113,10 +113,10 @@ Pipeline Parser::parse() const {
         const auto& cmd = pipeline.commands[i];
 
         if (i > 0 && !cmd.inputFile.empty()) {
-            throw SemanticError("Komanda '" + cmd.name + "' uzima ulaz iz cjevovoda, ne moze imati redirekciju '<'.");
+            throw SemanticError("Command '" + cmd.name + "' has input from pipe, cannot have input redirection.");
         }
         if (i < pipeline.commands.size() - 1 && !cmd.outputFile.empty()) {
-            throw SemanticError("Komanda '" + cmd.name + "' salje izlaz u cjevovod, ne moze imati redirekciju '>'.");
+            throw SemanticError("Command '" + cmd.name + "' has output to pipe, cannot have output redirection.");
         }
     }
 
